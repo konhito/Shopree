@@ -15,6 +15,30 @@ import { FAQSection } from "@/components/faq-section";
 import heroImg from "@/public/images/1.png";
 import worldMap from "@/public/images/world_map.png";
 
+const testimonials = [
+  {
+    name: "Priya Sharma",
+    location: "Sydney, Australia",
+    image:
+      "https://images.unsplash.com/photo-1586297135537-94bc9ba060aa?w=400&q=80",
+    text: "Finally, I can get all my favorite Indian products delivered right to my doorstep in Australia. The service is fantastic!",
+  },
+  {
+    name: "Rahul Patel",
+    location: "Toronto, Canada",
+    image:
+      "https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=400&q=80",
+    text: "Been using their service for over a year now. The shipping is reliable and customer support is always helpful.",
+  },
+  {
+    name: "Anjali Desai",
+    location: "London, UK",
+    image:
+      "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400&q=80",
+    text: "Amazing service! Makes me feel connected to home through all my favorite Indian products.",
+  },
+];
+
 export default function Home() {
   return (
     <div className="flex flex-col">
@@ -193,6 +217,7 @@ export default function Home() {
               <div className="absolute top-[40%] left-[50%] h-3 w-3 animate-ping rounded-full bg-orange-500"></div>
               <div className="absolute top-[60%] left-[30%] h-3 w-3 animate-ping rounded-full bg-orange-500"></div>
               <div className="absolute top-[70%] left-[85%] h-3 w-3 animate-ping rounded-full bg-orange-500"></div>
+              <div className="absolute top-[30%] left-[85%] h-2 w-1 animate-ping rounded-full bg-orange-500"></div>
             </div>
           </div>
         </div>
