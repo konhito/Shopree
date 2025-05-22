@@ -1,14 +1,98 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Check } from "lucide-react"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Check,
+  X,
+  ChevronDown,
+  ChevronRight,
+  Star,
+  Flag,
+  Package,
+  Calculator,
+  AlertTriangle,
+  Loader2,
+} from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { cn } from "@/lib/utils";
 
 export default function PricingPage() {
-  const [currency, setCurrency] = useState("inr")
+  const [currency, setCurrency] = useState("inr");
+  const [showVolumetric, setShowVolumetric] = useState(false);
+  const [isCalculating, setIsCalculating] = useState(false);
+  type ShippingEstimate = {
+    cost: string;
+    deliveryTime: string;
+    carrier: string;
+  };
+
+  const [shippingEstimate, setShippingEstimate] =
+    useState<ShippingEstimate | null>(null);
+  const [calculatorData, setCalculatorData] = useState({
+    country: "US",
+    weight: "0.5",
+    unit: "cm",
+    length: "",
+    width: "",
+    height: "",
+  });
+
+  // Add shipping calculation function
+  const calculateShipping = async (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+    setIsCalculating(true);
+
+    try {
+      // Simulate API call with setTimeout
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      const baseRate = currency === "inr" ? 1500 : 20;
+      const weight = parseFloat(calculatorData.weight);
+      let volumetricWeight = 0;
+
+      if (showVolumetric) {
+        volumetricWeight =
+          (parseFloat(calculatorData.length || "0") *
+            parseFloat(calculatorData.width || "0") *
+            parseFloat(calculatorData.height || "0")) /
+          5000;
+      }
+
+      const chargeableWeight = Math.max(weight, volumetricWeight);
+      const estimate = Math.round(chargeableWeight * baseRate);
+
+      setShippingEstimate({
+        cost: currency === "inr" ? `₹${estimate}` : `$${estimate}`,
+        deliveryTime: "3-5 business days",
+        carrier: "Express Delivery",
+      });
+    } finally {
+      setIsCalculating(false);
+    }
+  };
 
   const pricingPlans = {
     inr: [
@@ -99,7 +183,7 @@ export default function PricingPage() {
         popular: false,
       },
     ],
-  }
+  };
 
   return (
     <div className="flex flex-col">
@@ -108,11 +192,346 @@ export default function PricingPage() {
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             <div className="space-y-2">
-              <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl">Simple, Transparent Pricing</h1>
+              <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl">
+                Simple, Transparent Pricing
+              </h1>
               <p className="max-w-[700px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                Choose the plan that works best for your shipping needs from India
+                Choose the plan that works best for your shipping needs from
+                India
               </p>
             </div>
+          </div>
+        </div>
+      </section>
+      <section className="py-12 md:py-16 lg:py-20 bg-gradient-to-r from-orange-50 to-pink-50">
+        <div className="container px-4 md:px-6">
+          <div className="flex flex-col items-center justify-center space-y-4 text-center mb-10">
+            <div className="space-y-2">
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">
+                Estimate Your International Shipping Costs
+              </h2>
+              <p className="max-w-[700px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                Get a quick shipping quote – Use the tool below to find out how
+                much your international shipment might cost. Simply enter the
+                country, package weight, and dimensions.
+              </p>
+            </div>
+          </div>
+
+          <div className="max-w-3xl mx-auto">
+            <Card>
+              <CardContent className="p-6">
+                <form className="space-y-6" onSubmit={calculateShipping}>
+                  <div className="grid gap-6 sm:grid-cols-2">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-gray-700">
+                        Destination Country
+                      </label>
+                      <select
+                        className="w-full px-3 py-2 border rounded-md border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        value={calculatorData.country}
+                        onChange={(e) =>
+                          setCalculatorData({
+                            ...calculatorData,
+                            country: e.target.value,
+                          })
+                        }
+                      >
+                        <option value="">Select Country</option>
+                        <option value="IND">India</option>
+                        <option value="US">United States</option>
+                        <option value="UK">United Kingdom</option>
+                        <option value="CA">Canada</option>
+                        <option value="AU">Australia</option>
+                        <option value="UAE">UAE</option>
+                        {/* Add more countries as needed */}
+                      </select>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-gray-700">
+                        Package Weight (kg)
+                      </label>
+                      <input
+                        type="number"
+                        min="0.1"
+                        step="0.1"
+                        placeholder="Enter weight"
+                        className="w-full px-3 py-2 border rounded-md border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        value={calculatorData.weight}
+                        onChange={(e) =>
+                          setCalculatorData({
+                            ...calculatorData,
+                            weight: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid gap-6 sm:grid-cols-3">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-gray-700">
+                        Length (cm)
+                      </label>
+                      <input
+                        type="number"
+                        min="1"
+                        placeholder="Length"
+                        className="w-full px-3 py-2 border rounded-md border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        value={calculatorData.length}
+                        onChange={(e) =>
+                          setCalculatorData({
+                            ...calculatorData,
+                            length: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-gray-700">
+                        Width (cm)
+                      </label>
+                      <input
+                        type="number"
+                        min="1"
+                        placeholder="Width"
+                        className="w-full px-3 py-2 border rounded-md border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        value={calculatorData.width}
+                        onChange={(e) =>
+                          setCalculatorData({
+                            ...calculatorData,
+                            width: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-gray-700">
+                        Height (cm)
+                      </label>
+                      <input
+                        type="number"
+                        min="1"
+                        placeholder="Height"
+                        className="w-full px-3 py-2 border rounded-md border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        value={calculatorData.height}
+                        onChange={(e) =>
+                          setCalculatorData({
+                            ...calculatorData,
+                            height: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                  </div>
+
+                  <Button
+                    type="submit"
+                    className="w-full bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white"
+                    size="lg"
+                    disabled={isCalculating}
+                  >
+                    {isCalculating ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Calculating...
+                      </>
+                    ) : (
+                      "Calculate Shipping Cost"
+                    )}
+                  </Button>
+
+                  {isCalculating && !shippingEstimate && (
+                    <div className="mt-6 p-6 bg-white rounded-lg border border-orange-100">
+                      <div className="flex flex-col items-center justify-center space-y-2">
+                        <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
+                        <p className="text-sm text-gray-600">
+                          Calculating your shipping cost...
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {!isCalculating && shippingEstimate && (
+                    <div className="mt-6 p-6 bg-white rounded-lg border border-orange-100">
+                      <h3 className="text-2xl font-bold text-center mb-4">
+                        {shippingEstimate.cost}
+                      </h3>
+                      <div className="grid gap-2 text-sm text-gray-600">
+                        <div className="flex justify-between">
+                          <span>Carrier:</span>
+                          <span className="font-medium">
+                            {shippingEstimate.carrier}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Delivery Time:</span>
+                          <span className="font-medium">
+                            {shippingEstimate.deliveryTime}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="mt-6 p-4 bg-orange-50 rounded-lg border border-orange-100">
+                    <p className="text-center text-sm text-gray-600">
+                      Note: This is an estimated cost. Final shipping costs may
+                      vary based on actual weight, dimensions, and destination.
+                    </p>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Country Resources Grid */}
+      <section className="py-12 md:py-16 lg:py-20">
+        <div className="container px-4 md:px-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Top Country Guides */}
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="flex items-center space-x-2">
+                  <Flag className="h-5 w-5 text-orange-500" />
+                  <CardTitle>Top Country Guides</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-gray-500">
+                  Detailed shipping guides for our most popular destinations
+                </p>
+              </CardContent>
+              <CardFooter>
+                <Button variant="ghost" className="w-full text-orange-600">
+                  View Guides <ChevronRight className="ml-2 h-4 w-4" />
+                </Button>
+              </CardFooter>
+            </Card>
+
+            {/* Shipping Resources */}
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="flex items-center space-x-2">
+                  <Package className="h-5 w-5 text-orange-500" />
+                  <CardTitle>Shipping Resources</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-gray-500">
+                  Everything you need to know about international shipping
+                </p>
+              </CardContent>
+              <CardFooter>
+                <Button variant="ghost" className="w-full text-orange-600">
+                  Learn More <ChevronRight className="ml-2 h-4 w-4" />
+                </Button>
+              </CardFooter>
+            </Card>
+
+            {/* Volumetric Calculator */}
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="flex items-center space-x-2">
+                  <Calculator className="h-5 w-5 text-orange-500" />
+                  <CardTitle>Weight Calculator</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-gray-500">
+                  Calculate volumetric weight for accurate shipping costs
+                </p>
+              </CardContent>
+              <CardFooter>
+                <Button variant="ghost" className="w-full text-orange-600">
+                  Calculate Now <ChevronRight className="ml-2 h-4 w-4" />
+                </Button>
+              </CardFooter>
+            </Card>
+
+            {/* Restricted Items */}
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="flex items-center space-x-2">
+                  <AlertTriangle className="h-5 w-5 text-orange-500" />
+                  <CardTitle>Restricted Items</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-gray-500">
+                  Check what items are restricted or prohibited for shipping
+                </p>
+              </CardContent>
+              <CardFooter>
+                <Button variant="ghost" className="w-full text-orange-600">
+                  View List <ChevronRight className="ml-2 h-4 w-4" />
+                </Button>
+              </CardFooter>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Medicine Shipping Rules */}
+      <section className="py-12 md:py-16 lg:py-20 bg-gradient-to-r from-orange-50 to-pink-50">
+        <div className="container px-4 md:px-6">
+          <div className="max-w-3xl mx-auto">
+            <div className="text-center mb-10">
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl mb-2">
+                📦 Shipping Medicines? Read This First
+              </h2>
+              <p className="text-gray-500">
+                Important guidelines for shipping medicines internationally
+              </p>
+            </div>
+
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="item-1">
+                <AccordionTrigger className="text-left">
+                  Prescription Requirements
+                </AccordionTrigger>
+                <AccordionContent>
+                  All medicine shipments require valid prescriptions from
+                  licensed medical practitioners. Prescriptions must be in
+                  English or accompanied by certified translations.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-2">
+                <AccordionTrigger className="text-left">
+                  Packaging Guidelines
+                </AccordionTrigger>
+                <AccordionContent>
+                  Medicines must be in original packaging with clear labels
+                  showing contents, dosage, and manufacturer details.
+                  Temperature-sensitive medications require special handling.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-3">
+                <AccordionTrigger className="text-left">
+                  Customs Documentation
+                </AccordionTrigger>
+                <AccordionContent>
+                  Additional documentation including medical certificates and
+                  import permits may be required depending on destination
+                  country regulations.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-4">
+                <AccordionTrigger className="text-left">
+                  Restricted Medications
+                </AccordionTrigger>
+                <AccordionContent>
+                  Certain medications may be restricted or prohibited in
+                  specific countries. Check destination country regulations
+                  before shipping.
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
           </div>
         </div>
       </section>
@@ -120,7 +539,11 @@ export default function PricingPage() {
       {/* Pricing Cards */}
       <section className="py-12 md:py-16 lg:py-20">
         <div className="container px-4 md:px-6">
-          <Tabs defaultValue="inr" className="w-full" onValueChange={setCurrency}>
+          <Tabs
+            defaultValue="inr"
+            className="w-full"
+            onValueChange={setCurrency}
+          >
             <div className="flex justify-center mb-8">
               <TabsList className="grid w-64 grid-cols-2">
                 <TabsTrigger value="inr" className="text-base">
@@ -156,7 +579,9 @@ export default function PricingPage() {
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center mb-10">
             <div className="space-y-2">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">Plan Comparison</h2>
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">
+                Plan Comparison
+              </h2>
               <p className="max-w-[700px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                 Compare our plans to find the perfect fit for your needs
               </p>
@@ -175,7 +600,9 @@ export default function PricingPage() {
               </TableHeader>
               <TableBody>
                 <TableRow>
-                  <TableCell className="font-medium">Indian Virtual Address</TableCell>
+                  <TableCell className="font-medium">
+                    Indian Virtual Address
+                  </TableCell>
                   <TableCell>
                     <Check className="h-5 w-5 text-green-500" />
                   </TableCell>
@@ -187,19 +614,25 @@ export default function PricingPage() {
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell className="font-medium">Free Storage Period</TableCell>
+                  <TableCell className="font-medium">
+                    Free Storage Period
+                  </TableCell>
                   <TableCell>30 days</TableCell>
                   <TableCell>60 days</TableCell>
                   <TableCell>90 days</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell className="font-medium">Package Consolidation</TableCell>
+                  <TableCell className="font-medium">
+                    Package Consolidation
+                  </TableCell>
                   <TableCell>Basic</TableCell>
                   <TableCell>Advanced</TableCell>
                   <TableCell>Premium</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell className="font-medium">Customer Support</TableCell>
+                  <TableCell className="font-medium">
+                    Customer Support
+                  </TableCell>
                   <TableCell>Email</TableCell>
                   <TableCell>Priority</TableCell>
                   <TableCell>24/7 Dedicated</TableCell>
@@ -211,13 +644,17 @@ export default function PricingPage() {
                   <TableCell>Exclusive</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell className="font-medium">Personal Shopper</TableCell>
+                  <TableCell className="font-medium">
+                    Personal Shopper
+                  </TableCell>
                   <TableCell>Pay per request</TableCell>
                   <TableCell>2 free requests</TableCell>
                   <TableCell>Unlimited</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell className="font-medium">Express Shipping Priority</TableCell>
+                  <TableCell className="font-medium">
+                    Express Shipping Priority
+                  </TableCell>
                   <TableCell>-</TableCell>
                   <TableCell>-</TableCell>
                   <TableCell>
@@ -225,7 +662,9 @@ export default function PricingPage() {
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell className="font-medium">Customs Assistance</TableCell>
+                  <TableCell className="font-medium">
+                    Customs Assistance
+                  </TableCell>
                   <TableCell>Basic</TableCell>
                   <TableCell>Advanced</TableCell>
                   <TableCell>Premium</TableCell>
@@ -237,85 +676,34 @@ export default function PricingPage() {
       </section>
 
       {/* Shipping Rates */}
-      <section className="py-12 md:py-16 lg:py-20">
-        <div className="container px-4 md:px-6">
-          <div className="flex flex-col items-center justify-center space-y-4 text-center mb-10">
-            <div className="space-y-2">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">Shipping Rates</h2>
-              <p className="max-w-[700px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                Transparent shipping rates to popular destinations
-              </p>
-            </div>
-          </div>
 
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[200px]">Destination</TableHead>
-                  <TableHead>0.5 kg</TableHead>
-                  <TableHead>1 kg</TableHead>
-                  <TableHead>2 kg</TableHead>
-                  <TableHead>5 kg</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableRow>
-                  <TableCell className="font-medium">United States</TableCell>
-                  <TableCell>{currency === "inr" ? "₹1,499" : "$19.99"}</TableCell>
-                  <TableCell>{currency === "inr" ? "₹1,999" : "$24.99"}</TableCell>
-                  <TableCell>{currency === "inr" ? "₹2,999" : "$39.99"}</TableCell>
-                  <TableCell>{currency === "inr" ? "₹5,999" : "$79.99"}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">United Kingdom</TableCell>
-                  <TableCell>{currency === "inr" ? "₹1,399" : "$18.99"}</TableCell>
-                  <TableCell>{currency === "inr" ? "₹1,899" : "$23.99"}</TableCell>
-                  <TableCell>{currency === "inr" ? "₹2,799" : "$36.99"}</TableCell>
-                  <TableCell>{currency === "inr" ? "₹5,499" : "$72.99"}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">Canada</TableCell>
-                  <TableCell>{currency === "inr" ? "₹1,599" : "$20.99"}</TableCell>
-                  <TableCell>{currency === "inr" ? "₹2,099" : "$27.99"}</TableCell>
-                  <TableCell>{currency === "inr" ? "₹3,199" : "$42.99"}</TableCell>
-                  <TableCell>{currency === "inr" ? "₹6,299" : "$83.99"}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">Australia</TableCell>
-                  <TableCell>{currency === "inr" ? "₹1,699" : "$22.99"}</TableCell>
-                  <TableCell>{currency === "inr" ? "₹2,299" : "$29.99"}</TableCell>
-                  <TableCell>{currency === "inr" ? "₹3,499" : "$45.99"}</TableCell>
-                  <TableCell>{currency === "inr" ? "₹6,799" : "$89.99"}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">UAE</TableCell>
-                  <TableCell>{currency === "inr" ? "₹1,299" : "$16.99"}</TableCell>
-                  <TableCell>{currency === "inr" ? "₹1,799" : "$22.99"}</TableCell>
-                  <TableCell>{currency === "inr" ? "₹2,599" : "$33.99"}</TableCell>
-                  <TableCell>{currency === "inr" ? "₹4,999" : "$65.99"}</TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </div>
-        </div>
-      </section>
+      {/* Shipping Calculator Section */}
 
       {/* CTA Section */}
       <section className="py-12 md:py-16 lg:py-20 bg-gradient-to-r from-orange-500 to-pink-500 text-white">
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             <div className="space-y-2">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">Ready to get started?</h2>
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">
+                Ready to get started?
+              </h2>
               <p className="max-w-[700px] text-white/80 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                Sign up today and start shopping from your favorite Indian stores.
+                Sign up today and start shopping from your favorite Indian
+                stores.
               </p>
             </div>
             <div className="flex flex-col gap-2 min-[400px]:flex-row">
-              <Button size="lg" className="bg-white text-orange-500 hover:bg-white/90">
+              <Button
+                size="lg"
+                className="bg-white text-orange-500 hover:bg-white/90"
+              >
                 Get Started
               </Button>
-              <Button size="lg" variant="outline" className="text-white border-white hover:bg-white/20">
+              <Button
+                size="lg"
+                variant="outline"
+                className="text-orange-500 border-white hover:bg-white/20"
+              >
                 Contact Us
               </Button>
             </div>
@@ -323,13 +711,23 @@ export default function PricingPage() {
         </div>
       </section>
     </div>
-  )
+  );
 }
 
-function PricingCard({ plan }) {
+type Plan = {
+  name: string;
+  price: string;
+  description: string;
+  features: string[];
+  popular: boolean;
+};
+
+function PricingCard({ plan }: { plan: Plan }) {
   return (
     <Card
-      className={`overflow-hidden transition-all hover:shadow-lg ${plan.popular ? "border-orange-500 shadow-lg relative" : ""}`}
+      className={`overflow-hidden transition-all hover:shadow-lg ${
+        plan.popular ? "border-orange-500 shadow-lg relative" : ""
+      }`}
     >
       {plan.popular && (
         <div className="absolute top-0 right-0 bg-gradient-to-r from-orange-500 to-pink-500 text-white px-4 py-1 text-sm font-medium rounded-bl-lg">
@@ -356,11 +754,15 @@ function PricingCard({ plan }) {
       </CardContent>
       <CardFooter>
         <Button
-          className={`w-full ${plan.popular ? "bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600" : ""}`}
+          className={`w-full ${
+            plan.popular
+              ? "bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600"
+              : ""
+          }`}
         >
           Get Started
         </Button>
       </CardFooter>
     </Card>
-  )
+  );
 }

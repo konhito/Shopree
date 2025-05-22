@@ -1,12 +1,28 @@
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { ShoppingBag, Package, Truck, Shield, Clock, CreditCard } from "lucide-react"
-import type { Metadata } from "next"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  ShoppingBag,
+  Package,
+  Truck,
+  Shield,
+  Clock,
+  CreditCard,
+} from "lucide-react";
+import type { Metadata } from "next";
+import { ReactElement, JSXElementConstructor, ReactNode, ReactPortal, Key } from "react";
 
 export const metadata: Metadata = {
   title: "Our Services | IndiBridge",
-  description: "Explore our range of services designed to bring India closer to you, no matter where you are.",
-}
+  description:
+    "Explore our range of services designed to bring India closer to you, no matter where you are.",
+};
 
 export default function ServicesPage() {
   return (
@@ -16,9 +32,12 @@ export default function ServicesPage() {
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             <div className="space-y-2">
-              <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl">Our Services</h1>
+              <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl">
+                Our Services
+              </h1>
               <p className="max-w-[700px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                Comprehensive solutions to bring your favorite Indian products to your doorstep.
+                Comprehensive solutions to bring your favorite Indian products
+                to your doorstep.
               </p>
             </div>
           </div>
@@ -85,7 +104,12 @@ export default function ServicesPage() {
               icon={<Truck className="h-10 w-10 text-green-600" />}
               title="Express Shipping"
               description="Need your packages urgently? Choose our express shipping option for faster delivery."
-              features={["3-5 business days delivery", "Priority handling", "Real-time tracking", "Insurance included"]}
+              features={[
+                "3-5 business days delivery",
+                "Priority handling",
+                "Real-time tracking",
+                "Insurance included",
+              ]}
               gradient="from-green-500 to-yellow-500"
             />
 
@@ -110,45 +134,50 @@ export default function ServicesPage() {
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             <div className="space-y-2">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">Our Process</h2>
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">
+                Our Process
+              </h2>
               <p className="max-w-[700px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                We've streamlined the process to make international shopping from India as easy as possible.
+                We've streamlined the process to make international shopping
+                from India as easy as possible.
               </p>
             </div>
           </div>
           <div className="mx-auto mt-12 max-w-5xl">
             <div className="relative">
-              <div className="absolute left-1/2 h-full w-1 -translate-x-1/2 bg-gradient-to-b from-orange-500 to-pink-500"></div>
-              <ProcessStep
-                number="01"
-                title="Sign Up"
-                description="Create an account and get your personal Indian shipping address."
-                isLeft={true}
-              />
-              <ProcessStep
-                number="02"
-                title="Shop"
-                description="Use your Indian address when shopping on Indian websites."
-                isLeft={false}
-              />
-              <ProcessStep
-                number="03"
-                title="Receive & Process"
-                description="We receive your packages and notify you. You can request consolidation or other services."
-                isLeft={true}
-              />
-              <ProcessStep
-                number="04"
-                title="Ship"
-                description="We ship your packages to your international address."
-                isLeft={false}
-              />
-              <ProcessStep
-                number="05"
-                title="Delivery"
-                description="Receive your favorite Indian products at your doorstep."
-                isLeft={true}
-              />
+              <div className="absolute left-1/2 h-full w-1 -translate-x-1/2 bg-gradient-to-b from-orange-500 to-pink-500 z-0"></div>
+              <div className="relative z-10">
+                <ProcessStep
+                  number="01"
+                  title="Sign Up"
+                  description="Create an account and get your personal Indian shipping address."
+                  isLeft={true}
+                />
+                <ProcessStep
+                  number="02"
+                  title="Shop"
+                  description="Use your Indian address when shopping on Indian websites."
+                  isLeft={false}
+                />
+                <ProcessStep
+                  number="03"
+                  title="Receive & Process"
+                  description="We receive your packages and notify you. You can request consolidation or other services."
+                  isLeft={true}
+                />
+                <ProcessStep
+                  number="04"
+                  title="Ship"
+                  description="We ship your packages to your international address."
+                  isLeft={false}
+                />
+                <ProcessStep
+                  number="05"
+                  title="Delivery"
+                  description="Receive your favorite Indian products at your doorstep."
+                  isLeft={true}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -159,9 +188,12 @@ export default function ServicesPage() {
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             <div className="space-y-2">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">Ready to get started?</h2>
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">
+                Ready to get started?
+              </h2>
               <p className="max-w-[700px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                Sign up today and start shopping from your favorite Indian stores.
+                Sign up today and start shopping from your favorite Indian
+                stores.
               </p>
             </div>
             <div className="flex flex-col gap-2 min-[400px]:flex-row">
@@ -179,10 +211,18 @@ export default function ServicesPage() {
         </div>
       </section>
     </div>
-  )
+  );
 }
 
-function ServiceCard({ icon, title, description, features, gradient }) {
+interface ServiceCardProps {
+  icon: ReactNode;
+  title: string;
+  description: string;
+  features: (string | ReactNode)[];
+  gradient: string;
+}
+
+function ServiceCard({ icon, title, description, features, gradient }: ServiceCardProps) {
   return (
     <Card className="overflow-hidden transition-all hover:shadow-lg">
       <CardHeader className="pb-2">
@@ -190,7 +230,9 @@ function ServiceCard({ icon, title, description, features, gradient }) {
           <div
             className={`flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r ${gradient} bg-clip-padding p-[2px]`}
           >
-            <div className="flex h-full w-full items-center justify-center rounded-full bg-white">{icon}</div>
+            <div className="flex h-full w-full items-center justify-center rounded-full bg-white">
+              {icon}
+            </div>
           </div>
         </div>
         <CardTitle className="text-xl">{title}</CardTitle>
@@ -198,7 +240,7 @@ function ServiceCard({ icon, title, description, features, gradient }) {
       </CardHeader>
       <CardContent>
         <ul className="space-y-2 text-sm">
-          {features.map((feature, index) => (
+          {features.map((feature: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined, index: Key | null | undefined) => (
             <li key={index} className="flex items-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -223,19 +265,26 @@ function ServiceCard({ icon, title, description, features, gradient }) {
         </Button>
       </CardFooter>
     </Card>
-  )
+  );
 }
 
-function ProcessStep({ number, title, description, isLeft }) {
+interface ProcessStepProps {
+  number: string;
+  title: string;
+  description: string;
+  isLeft: boolean;
+}
+
+function ProcessStep({ number, title, description, isLeft }: ProcessStepProps) {
   return (
     <div className="relative mb-8 flex items-center">
       <div
-        className={`absolute left-1/2 z-10 flex h-10 w-10 -translate-x-1/2 items-center justify-center rounded-full bg-gradient-to-r from-orange-500 to-pink-500 text-white`}
+        className={`absolute left-1/2 flex h-10 w-10 -translate-x-1/2 items-center justify-center rounded-full bg-gradient-to-r from-orange-500 to-pink-500 text-white z-10`}
       >
         {number}
       </div>
       <div
-        className={`relative ml-auto mr-auto w-5/12 rounded-lg bg-white p-6 shadow-lg ${
+        className={`w-5/12 rounded-lg bg-white p-6 shadow-lg ${
           isLeft ? "mr-auto text-right" : "ml-auto"
         }`}
       >
@@ -243,5 +292,5 @@ function ProcessStep({ number, title, description, isLeft }) {
         <p className="text-gray-500">{description}</p>
       </div>
     </div>
-  )
+  );
 }

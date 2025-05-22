@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Package, ShoppingBag, Truck } from "lucide-react";
 import { Testimonials } from "@/components/testimonials";
 import { FAQSection } from "@/components/faq-section";
-import heroImg from "@/public/images/1.png";
+import heroImg from "@/public/images/1000075914 (1).png";
 import worldMap from "@/public/images/world_map.png";
 
 const testimonials = [
@@ -43,49 +43,52 @@ export default function Home() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative py-20 overflow-hidden">
+      <section className="relative py-12 sm:py-16 lg:py-20 overflow-hidden">
         <div className="container px-4 md:px-6">
-          <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
-            <div className="flex flex-col justify-center space-y-4">
-              <div className="space-y-2">
+          <div className="grid gap-8 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
+            <div className="flex flex-col justify-center space-y-4 text-center lg:text-left">
+              <div className="space-y-4 sm:space-y-6">
                 <Badge
                   variant="outline"
-                  className="border-orange-200 bg-orange-50 text-orange-600 hover:bg-orange-100"
+                  className="inline-flex border-orange-200 bg-orange-50 text-orange-600 hover:bg-orange-100"
                 >
                   Trusted by Indians in 50+ countries
                 </Badge>
-                <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
+                <h1 className="text-2xl font-bold tracking-tighter sm:text-4xl md:text-5xl xl:text-6xl/none">
                   Bringing India Closer —{" "}
-                  <span className="bg-gradient-to-r from-orange-500 to-pink-500 bg-clip-text text-transparent">
+                  <span className="block sm:inline bg-gradient-to-r from-orange-500 to-pink-500 bg-clip-text text-transparent">
                     One Parcel at a Time
                   </span>
                 </h1>
-                <p className="max-w-[600px] text-gray-500 md:text-xl">
+                <p className="mx-auto lg:mx-0 max-w-[600px] text-base text-gray-500 sm:text-lg md:text-xl">
                   Shop from any Indian store and we'll handle the rest. Your
                   favorite products from home, delivered to your doorstep
                   anywhere in the world.
                 </p>
               </div>
-              <div className="flex flex-col gap-2 min-[400px]:flex-row">
+              <div className="flex flex-col gap-4 sm:flex-row sm:justify-center lg:justify-start">
                 <Button
                   size="lg"
-                  className="bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600"
+                  className="w-full sm:w-auto text-sm sm:text-base bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600"
                 >
                   Get Started
                 </Button>
-                <Button size="lg" variant="outline">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="w-full sm:w-auto text-sm sm:text-base"
+                >
                   How It Works
                 </Button>
               </div>
             </div>
-            <div className="relative flex items-center justify-center">
-              <div className="relative h-[350px] w-[350px] sm:h-[400px] sm:w-[400px] lg:h-[500px] lg:w-[500px]">
-                <div className="absolute inset-0 scale-[1] rounded-full bg-gradient-to-r from-orange-500 to-pink-500 opacity-20 blur-3xl"></div>
+            <div className="relative flex items-center justify-center mt-8 lg:mt-16">
+              <div className="relative h-full w-[250px] sm:h-full sm:w-[350px] lg:h-full lg:w-[500px]">
+                <div className="absolute inset-0 scale-[0.8] sm:scale-[1] rounded-full bg-gradient-to-r from-orange-500 to-blue-500 opacity-20 blur-3xl"></div>
                 <Image
                   src={heroImg}
                   alt="Indian delivery service with courier holding package"
-                  width={500}
-                  className="relative z-10 rounded-lg object-cover ransform -translate-y-20" // Added transform translate"
+                  className="relative z-10 rounded-lg object-cover w-full h-full transform pt-10 -translate-y-10 sm:-translate-y-20"
                   priority
                 />
               </div>
@@ -241,14 +244,14 @@ export default function Home() {
                 Start shopping from your favorite Indian stores today.
               </p>
             </div>
-            <div className="flex flex-col gap-2 min-[400px]:flex-row">
+            <div className="flex flex-col gap-4 sm:flex-row sm:gap-2">
               <Button
                 size="lg"
-                className="bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600"
+                className="w-full sm:w-auto bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600"
               >
                 Get Started
               </Button>
-              <Button size="lg" variant="outline">
+              <Button size="lg" variant="outline" className="w-full sm:w-auto">
                 Contact Us
               </Button>
             </div>
