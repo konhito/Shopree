@@ -713,7 +713,6 @@ export default function PricingPage() {
     </div>
   );
 }
-
 type Plan = {
   name: string;
   price: string;
