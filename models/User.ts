@@ -44,10 +44,12 @@ const UserSchema = new Schema<IUser>(
       type: Boolean,
       default: true,
     },
-    locker: {
-      type: [String],
-      default: [],
-    },
+    locker: [
+      {
+        type: String,
+        default: [],
+      },
+    ],
     itemIsReady: {
       type: Boolean,
       default: false,
@@ -58,24 +60,47 @@ const UserSchema = new Schema<IUser>(
     },
     lockerNumber: {
       type: String,
-      unique: true,
       required: true,
     },
   },
   {
     timestamps: true,
+    strict: true,
   }
 );
+
+// Drop all existing indexes and create new ones
+const dropAndCreateIndexes = async () => {
+  try {
+    const User = mongoose.model("User");
+    // Drop all existing indexes
+    await User.collection.dropIndexes();
+    console.log("User: Dropped all existing indexes");
+
+    // Create new indexes
+    await User.collection.createIndex({ email: 1 }, { unique: true });
+    await User.collection.createIndex(
+      { clerkId: 1 },
+      { unique: true, sparse: true }
+    );
+    await User.collection.createIndex({ lockerNumber: 1 }, { unique: true });
+    console.log("User: Created new indexes");
+  } catch (error) {
+    console.error("User: Error managing indexes:", error);
+  }
+};
 
 // Hash password before saving
 UserSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
   try {
+    console.log("User: Hashing password");
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
     next();
   } catch (error: any) {
+    console.error("User: Error hashing password:", error);
     next(error);
   }
 });
@@ -84,10 +109,20 @@ UserSchema.pre("save", async function (next) {
 UserSchema.methods.comparePassword = async function (
   candidatePassword: string
 ): Promise<boolean> {
-  return bcrypt.compare(candidatePassword, this.password);
+  try {
+    return await bcrypt.compare(candidatePassword, this.password);
+  } catch (error) {
+    console.error("User: Error comparing password:", error);
+    throw error;
+  }
 };
 
 // Check if the model exists before creating a new one
 const User = mongoose.models.User || mongoose.model<IUser>("User", UserSchema);
+
+// Drop and recreate indexes when the model is first created
+if (!mongoose.models.User) {
+  dropAndCreateIndexes();
+}
 
 export default User;

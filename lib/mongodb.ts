@@ -24,21 +24,29 @@ if (!global.mongoose) {
 }
 
 async function connectDB() {
+  console.log("MongoDB: Attempting to connect to database...");
+
   if (cached.conn) {
+    console.log("MongoDB: Using cached connection");
     return cached.conn;
   }
 
   if (!cached.promise) {
+    console.log("MongoDB: Creating new connection");
     const opts = {
       bufferCommands: false,
     };
 
-    cached.promise = mongoose.connect(MONGODB_URI!, opts);
+    cached.promise = mongoose.connect(MONGODB_URI!, opts).then((mongoose) => {
+      console.log("MongoDB: Successfully connected to database");
+      return mongoose;
+    });
   }
 
   try {
     cached.conn = await cached.promise;
   } catch (e) {
+    console.error("MongoDB: Connection error:", e);
     cached.promise = null;
     throw e;
   }
