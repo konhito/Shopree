@@ -8,6 +8,7 @@ import WhatsAppSupport from "@/components/whatsapp-support";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
 import { ClerkProvider } from "@clerk/nextjs";
+import UserSync from "@/components/user-sync";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -35,6 +36,7 @@ export default function RootLayout({
               <WhatsAppSupport />
               <Footer />
             </div>
+            <UserSync />
             <Toaster />
           </ClerkProvider>
         </ThemeProvider>
