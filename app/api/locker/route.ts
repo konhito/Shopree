@@ -22,7 +22,7 @@ interface FormattedLocker {
 }
 
 export async function POST(req: Request) {
-  console.log("Locker API: Starting locker creation process");
+  console.log("Locker API: Starting locker creation/update process");
 
   try {
     const { userId } = await auth();
@@ -72,59 +72,101 @@ export async function POST(req: Request) {
       );
     }
 
-    // Check if locker number exists
+    // Check if locker already exists
     const existingLocker = await Locker.findOne({ lockerNumber });
+
     if (existingLocker) {
-      console.log("Locker API: Locker number already exists");
-      return NextResponse.json(
-        { message: "Locker number already exists" },
-        { status: 400 }
-      );
-    }
+      console.log("Locker API: Locker exists, updating with new items");
 
-    // Create new locker
-    try {
-      const newLocker = new Locker({
-        lockerNumber,
-        userId,
-        items,
-        status: "pending",
-      });
+      try {
+        // Add new items to existing locker
+        existingLocker.items.push(...items);
 
-      console.log("Locker API: About to save locker with data:", {
-        lockerNumber: newLocker.lockerNumber,
-        userId: newLocker.userId,
-        itemsCount: newLocker.items.length,
-        status: newLocker.status,
-      });
+        // The pre-save hook will automatically recalculate totalValue
+        const updatedLocker = await existingLocker.save();
 
-      const savedLocker = await newLocker.save();
-      console.log("Locker API: New locker created =", savedLocker);
+        console.log("Locker API: Locker updated successfully =", {
+          lockerNumber: updatedLocker.lockerNumber,
+          totalItems: updatedLocker.items.length,
+          totalValue: updatedLocker.totalValue,
+        });
 
-      // Update user's locker array
-      user.locker.push(lockerNumber);
-      await user.save();
-      console.log("Locker API: Updated user's locker array");
+        // Make sure user has this locker in their array (in case it wasn't there)
+        if (!user.locker.includes(lockerNumber)) {
+          user.locker.push(lockerNumber);
+          await user.save();
+          console.log("Locker API: Added locker to user's array");
+        }
 
-      return NextResponse.json({
-        success: true,
-        message: "Locker created successfully",
-        locker: {
-          lockerNumber: savedLocker.lockerNumber,
-          items: savedLocker.items,
-          status: savedLocker.status,
-          totalValue: savedLocker.totalValue,
-        },
-      });
-    } catch (error) {
-      console.error("Locker API: Error creating locker:", error);
-      return NextResponse.json(
-        {
-          message: "Error creating locker",
-          error: error instanceof Error ? error.message : "Unknown error",
-        },
-        { status: 500 }
-      );
+        return NextResponse.json({
+          success: true,
+          message: "Items added to existing locker successfully",
+          locker: {
+            lockerNumber: updatedLocker.lockerNumber,
+            items: updatedLocker.items,
+            status: updatedLocker.status,
+            totalValue: updatedLocker.totalValue,
+            totalItems: updatedLocker.items.length,
+          },
+          isUpdate: true,
+        });
+      } catch (error) {
+        console.error("Locker API: Error updating locker:", error);
+        return NextResponse.json(
+          {
+            message: "Error updating locker",
+            error: error instanceof Error ? error.message : "Unknown error",
+          },
+          { status: 500 }
+        );
+      }
+    } else {
+      // Create new locker if it doesn't exist
+      console.log("Locker API: Creating new locker");
+
+      try {
+        const newLocker = new Locker({
+          lockerNumber,
+          items,
+          status: "pending",
+        });
+
+        console.log("Locker API: About to save new locker with data:", {
+          lockerNumber: newLocker.lockerNumber,
+          itemsCount: newLocker.items.length,
+          status: newLocker.status,
+        });
+
+        const savedLocker = await newLocker.save();
+        console.log("Locker API: New locker created =", savedLocker);
+
+        // Update user's locker array
+        user.locker.push(lockerNumber);
+        await user.save();
+        console.log("Locker API: Updated user's locker array");
+
+        return NextResponse.json({
+          success: true,
+          message: "New locker created successfully",
+          locker: {
+            lockerNumber: savedLocker.lockerNumber,
+            items: savedLocker.items,
+            status: savedLocker.status,
+            totalValue: savedLocker.totalValue,
+            totalItems: savedLocker.items.length,
+          },
+          isUpdate: false,
+        });
+      } catch (error) {
+        console.error("Locker API: Error creating locker:", error);
+        return NextResponse.json(
+          {
+            message: "Error creating locker",
+            error: error instanceof Error ? error.message : "Unknown error",
+          },
+          { status: 500 }
+        );
+      }
     }
   } catch (error) {
     console.error("Locker API: Error in process:", error);
