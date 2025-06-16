@@ -33,8 +33,7 @@ export default function LockerPage() {
   useEffect(() => {
     const fetchLocker = async () => {
       try {
-        const storeLockerID = localStorage.getItem("lockerNumber");
-        const response = await fetch(`/api/locker/${storeLockerID}`);
+        const response = await fetch(`/api/locker/${params.lockerNumber}`);
         if (!response.ok) {
           throw new Error("Failed to fetch locker details");
         }
